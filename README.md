@@ -1,5 +1,5 @@
-# Udacity-Intro-to-Programming-Memory-Game
-Udacity Intro to Programming Nanodegree Project
+# Udacity-Front-End-Nanodegree-Memory-Game
+Udacity Front-End Developer Nanodegree Project
 
 ## Project Overview
 ### What Will I Build?
