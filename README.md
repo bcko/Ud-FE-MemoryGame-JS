@@ -1,11 +1,12 @@
 # Udacity-Front-End-Nanodegree-Memory-Game
-Udacity Front-End Developer Nanodegree Project
+Udacity Front-End Developer Nanodegree Project : Memory Game
 
 ## Project Overview
 ### What Will I Build?
 The Memory Game Project is all about demonstrating your mastery of HTML, CSS, and JavaScript. You’ll build a complete browser-based card matching game (also known as Concentration). But this isn’t just any memory game! It’s a shnazzy, well-designed, feature-packed memory game!
 
 The styling of the game is up to you, but here's what we came up with:
+
 ![Matching Game](https://d17h27t6h515a5.cloudfront.net/topher/2017/February/589bb972_screen-shot-2017-02-07-at-3.03.15-pm/screen-shot-2017-02-07-at-3.03.15-pm.png)
 
 ### How The Game Works
@@ -17,12 +18,13 @@ Each turn:
 * The player then turns over a second card, trying to find the corresponding card with the same symbol.
 * If the cards match, both cards stay flipped over.
 * If the cards do not match, both cards are flipped face down.
+
 The game ends once all cards have been correctly matched.
 
 ### Game Functionality
 The real-life game, players flip over cards to locate the pairs that match The goal is to recreate this effect in your project. There are a couple of interactions that you'll need to handle:
 
-Flipping cards
+* Flipping cards
 * What happens when cards match
 * What happens when cards do not match
 * When the game finishes
@@ -54,8 +56,8 @@ The following are just some of the questions that you'll experience along the wa
 
 There's no one right answer to each question. While working on this project, communicating with your mentor, and getting feedback from the project reviewer you'll develop answers to these questions.
 
-## Instructions
 
+## Instructions
 ### Get The Starter Code
 If you'd like to start from scratch without any files, you are encouraged to do so! You learn the most by developing on your own! But, it can be a bit challenging having to start from scratch, so we do provide a starter project to use.
 
