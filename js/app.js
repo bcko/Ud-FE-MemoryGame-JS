@@ -1,8 +1,10 @@
-"use strict"; // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 
-/*
- * Create a list that holds all of your cards
- */
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
+// for better error handling, and performance
+"use strict"; 
+
+
+// Create a list that holds all of your cards
 const cards = ['fa-anchor', 'fa-anchor', 
                 'fa-bicycle', 'fa-bicycle',
                 'fa-bolt', 'fa-bolt',
@@ -13,11 +15,29 @@ const cards = ['fa-anchor', 'fa-anchor',
                 'fa-paper-plane-o', 'fa-paper-plane-o'
                 ]
 
-function test() {
-    shuffle(cards);
-    console.log(cards);
-
+/*
+Input: number of moves 
+Output: no output
+Behavior : updates <span class="moves">numMoves</span> in index.html
+*/
+function updateMoves(numMoves) {
+    document.getElementsByClassName("moves")[0].innerHTML = numMoves;
 }
+
+/*
+Input: number of stars
+Output: no output
+Behavior: update <ul class="stars"> </ul> in index.html
+*/
+function updateStars(numStars) {
+    // minimize DOM access by temporarily storing star list to content variable
+    let content = "";
+    for (let i=0; i<numStars; ++i) {
+        content += '<li><i class="fa fa-star"></i></li>';
+    }
+    document.getElementsByClassName("stars")[0].innerHTML = content;
+}
+
 
 /*
  * Display the cards on the page
