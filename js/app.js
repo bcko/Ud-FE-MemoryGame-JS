@@ -1,7 +1,23 @@
+"use strict"; // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
+
 /*
  * Create a list that holds all of your cards
  */
+const cards = ['fa-anchor', 'fa-anchor', 
+                'fa-bicycle', 'fa-bicycle',
+                'fa-bolt', 'fa-bolt',
+                'fa-bomb', 'fa-bomb', 
+                'fa-cube', 'fa-cube',
+                'fa-diamond', 'fa-diamond',
+                'fa-leaf', 'fa-leaf',
+                'fa-paper-plane-o', 'fa-paper-plane-o'
+                ]
 
+function test() {
+    shuffle(cards);
+    console.log(cards);
+
+}
 
 /*
  * Display the cards on the page
