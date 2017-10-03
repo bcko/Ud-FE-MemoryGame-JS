@@ -11,37 +11,53 @@ const cards = ['fa-anchor', 'fa-anchor',
                 'fa-diamond', 'fa-diamond',
                 'fa-leaf', 'fa-leaf',
                 'fa-paper-plane-o', 'fa-paper-plane-o'
-                ]
+                ];
 
+const isCardOpen = [false, false, false, false,
+                    false, false, false, false,
+                    false, false, false, false,
+                    false, false, false, false];
+
+const moveElem = document.getElementsByClassName("moves")[0];
+const starElem = document.getElementsByClassName("stars")[0];
+const cardsElem = document.getElementsByClassName("card");
 
 /*
-Input: number of moves 
+Input: no input
 Output: no output
-Behavior : updates <span class="moves">numMoves</span> in index.html
+Behavior:
 */
-function updateMoves(numMoves) {
-    document.getElementsByClassName("moves")[0].innerHTML = numMoves;
+function restartGame() {
+    // At the beginning of a game, it should display 3 stars.
+    updateStars(3);
+    updateMoves(0);
+    resetDeck();
+    isCardOpen.fill(false);
 }
 
+/*
+Input: number of moves
+Output: no output
+Behavior: update number of moves in index.html
+Warning : refers to global variable moveElem
+*/
+function updateMoves(numMoves) {
+    moveElem.innerHTML = numMoves;
+}
 
 /*
 Input: number of stars
 Output: no output
 Behavior: update <ul class="stars"> </ul> in index.html
+Warning: refers to global variable starElem
 */
 function updateStars(numStars) {
-    // minimize DOM access by temporarily storing star list to content variable
     const star = '<li><i class="fa fa-star"></i></li>';
-    document.getElementsByClassName("stars")[0].innerHTML = star.repeat(numStars);
+    starElem.innerHTML = star.repeat(numStars);
 }
 
 
-/*
-Input: cards array
-Output: cards array
-Behavior: shuffles cards array elements
 // Shuffle function from http://stackoverflow.com/a/2450976
-*/
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
     while (currentIndex !== 0) {
@@ -57,14 +73,15 @@ function shuffle(array) {
 /*
 Input: no input
 Output: no output
-Behavior:
+Behavior: 
 */
 function resetDeck() {
-    let deckContents = "";
-    for (let card of cards) {
-        deckContents += `<li class="card"><i class="fa ${card}"></i></li>`;
+    shuffle(cards);    
+    for (let i=0; i<cardsElem.length; ++i) {
+        cardsElem[i].setAttribute("class", "card");
+        cardsElem[i].setAttribute("onclick", `openCard(${i})`);
+        cardsElem[i].firstChild.setAttribute("class", `fa + ${cards[i]}`);
     }
-    document.getElementsByClassName("deck")[0].innerHTML = deckContents;
 }
 
 
@@ -74,26 +91,14 @@ Output: no output
 Behavior: reveal entire cards. Used for Debugging
 */
 function showDeck() {
-    let deckContents = "";
-    for (let card of cards) {
-        deckContents += `<li class="card open show"><i class="fa ${card}"></i></li>`;
+    for (let cardElem of cardsElem) {
+        cardElem.setAttribute("class", "card open show");        
     }
-    document.getElementsByClassName("deck")[0].innerHTML = deckContents;    
 }
 
-/*
-Input: no input
-Output: no output
-Behavior:
-*/
-function restartGame() {
-    // At the beginning of a game, it should display 3 stars.
-    updateStars(3);
-    updateMoves(0);
-    shuffle(cards);
-    resetDeck();
+function openCard(i) {
+    cardsElem[i].setAttribute("class", "card open show");
 }
-
 
 /*
  * Display the cards on the page
@@ -102,7 +107,11 @@ function restartGame() {
  *   - add each card's HTML to the page
  */
 
+function main() {
+    resetDeck();
+}
 
+main();
 
 /*
  * set up the event listener for a card. If a card is clicked:
