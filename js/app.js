@@ -31,7 +31,9 @@ const tempArray = {
 
 const DECK = {
     cards : [  'fa-anchor', 'fa-anchor', 'fa-bicycle', 'fa-bicycle', 'fa-bolt', 'fa-bolt', 'fa-bomb', 'fa-bomb', 'fa-cube', 'fa-cube', 'fa-diamond', 'fa-diamond', 'fa-leaf', 'fa-leaf', 'fa-paper-plane-o', 'fa-paper-plane-o'
-            ]
+            ],
+    opened : []
+
 }
 
 class ScoreController {
@@ -151,18 +153,20 @@ class EventListener {
 
     static setClickCards() {
         console.log("class EventListener setClickCardsListener(): setup click eventListener for each card...")
-        console.log("[Listening] card clicks");
+        console.log("[Listening...] card clicks");
         const cardsElements = document.getElementsByClassName("card");
         for (let i = 0; i < cardsElements.length; ++i) {
-            cardsElements[i].setAttribute("onclick", `EventHandler.clickCard(${i})`);
+            //const cardSymbol = this.firstChild.classList[1];
+            cardsElements[i].setAttribute("onclick", `EventHandler.clickCard(this.firstChild.classList[1], ${i})`);
         }
     }
 }
 
 class EventHandler {
-    static clickCard(cardIndex) {
-        console.log(`[EVENT] user clicks card[${cardIndex}] and triggers EventHandler.clickCard(${cardIndex})`);
-        console.log(`In class EventHandler clickCard(${cardIndex}) :`);
+    static clickCard(cardSymbol,cardIndex) {
+        console.log(`[EVENT] user clicks card[${cardIndex}] and triggers EventHandler.clickCard(${cardSymbol}, ${cardIndex})`);
+        console.log(`In class EventHandler clickCard(${cardSymbol}, ${cardIndex}) :`);
+        ScoreController.incrementMove();
 
     }
     static clickRestart() {
@@ -182,193 +186,6 @@ function main() {
 }
 
 main();
-
-
-
-
-
-/*
-class Star {
-    constructor() {
-        this.stars = 3;
-        this.starsElem = document.getElementsByClassName("stars")[0];
-        Star.reset();
-    }
-
-    static reset() {
-        console.log("In class Star reset() : resets stars = 3");
-        Star.setStars(3);
-    }
-
-    static decrementByOne() {
-        console.log("In class Star decrementByOne() : decrements star by one");
-        this.setStars(this.stars-1);
-    }
-
-    static setStars(numStars) {
-        console.log(`In class Star setStar(${numStars}): `);
-        const starTag = '<li><i class="fa fa-star"></i></li>';
-        this.starsElem.innerHTML = this.starTag.repeat(numStars);
-    }
-}
-
-
-class Move {
-    constructor() {
-        this.moves = 0;
-        this.movesElem = document.getElementsByClassName("moves")[0];
-        this.reset();
-    }
-    
-    reset() {
-        console.log("In class Move reset() : resets move = 0");
-        this.moves = 0;
-        this.movesElem.innerHTML = 0;
-    }
-    
-    getMoves() {
-        return this.moves;
-    }
-
-    incrementByOne() {
-        console.log(`In class Move incrementByOne() : increment moves by one. moves=${this.moves + 1}`);               
-        this.moves += 1;
-        this.movesElem.innerHTML = this.moves;
-    }
-}
-
-class Deck {
-    constructor() {
-        this.cardsElem = document.getElementsByClassName("card"); 
-        this.cards = [  'fa-anchor', 'fa-anchor', 
-                        'fa-bicycle', 'fa-bicycle',
-                        'fa-bolt', 'fa-bolt',
-                        'fa-bomb', 'fa-bomb', 
-                        'fa-cube', 'fa-cube',
-                        'fa-diamond', 'fa-diamond',
-                        'fa-leaf', 'fa-leaf',
-                        'fa-paper-plane-o', 'fa-paper-plane-o'
-                     ];
-        this.isCardOpen = [ false, false, false, false,
-                            false, false, false, false,
-                            false, false, false, false,
-                            false, false, false, false
-                          ];
-        this.reset();                      
-    }
-
-    static openCard(i) {
-        cardsElem[i].setAttribute("class", "card open show");
-    }
-
-    // Algorithm adapted from https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm 
-    shuffleCards() {
-        console.log("In class Deck shuffleCards(): shuffles cards in a deck");
-        for (let i = this.cards.length - 1; i > 0; --i) {
-            const j = Math.floor(Math.random() * (i+1));
-            [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
-        }
-    }
-
-    layCardsFacedown() {
-        console.log("In class Deck layCardsFacedown(): lays cards facedown");
-        for (let i = 0; i < this.cardsElem.length; ++i) {
-            this.cardsElem[i].setAttribute("class", "card");
-            this.cardsElem[i].firstChild.setAttribute("class", `fa + ${this.cards[i]}`);
-        }
-    }
-
-    reset() {
-        console.log("In class Deck reset(): [BEGIN] resetting Deck...");
-        
-        this.shuffleCards();
-        this.layCardsFacedown();
-        
-        console.log("In class Deck reset(): [DONE] resetting Deck")
-    }
-
-    static openDeck() {
-        for (let cardElem of this.cardsElem) {
-            cardElem.setAttribute("class", "card open show");        
-        }
-    }
-}
-
-*/
-
-
-
-
-/*
-
-
-class Game {
-
-    constructor() {
-        console.log("In class Game constructor(): [BEGIN] initializing new Matching Game...");
-        this.test = 3;
-     
-        this.moves = new Move();        
-        this.stars = new Star();
-        this.deck = new Deck();
-   
-        console.log("In class Game constructor(): [DONE] initializing new Matching Game");
-    }
-    setTest(num) {
-        this.test = num;
-    }
-    getTest() {
-        console.log(this.test);
-    }
-
-    static restart() {
-        console.log("In class Game restart(): [BEGIN] restarting Matching Game...")
-        
-        Star.reset();
-        this.deck.reset();
-        this.moves.reset();
-
-        console.log("In class Game restart(): [DONE] restarting Matching Game")
-    }
-  
-    restart() {
-        console.log("restart test");
-    }
-
-}
-*/
-
-/*
-class EventHandler {
-    clickCard(i) {
-        console.log(`[EVENT] user clicks card[${i}] and triggers EventHandler.clickCard(${i})`);
-        console.log(`In class EventHandler clickCard() :`);
-    }
-    clickRestart() {
-        console.log('[EVENT] user clicks restart button and triggers EventHandler.clickRestart()');
-        console.log("In class EventHandler clickRestart() : ");
-    }
-}
-
-class EventListener {
-    static setClickRestart() {
-        console.log("class EventListener setClickRestartListener() : setup onclick eventListener for restart button...");
-        const restartElement = document.getElementsByClassName('restart')[0];
-        restartElement.setAttribute("onclick", "EventHandler.clickRestart()");
-    }
-    static setClickCards() {
-        console.log("class EventListener setClickCardsListener(): setup onclick eventListener for each card...")
-        const cardsElements = document.getElementsByClassName("card");
-        for (let i = 0; i < cardsElements.length; ++i) {
-            cardsElements[i].setAttribute("onclick", `EventHandler.clickCard(${i})`);
-        }
-    }
-}
-*/
-
-    
-
-
 /*
  * set up the event listener for a card. If a card is clicked:
  *  - display the card's symbol (put this functionality in another function that you call from this one)
