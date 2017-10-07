@@ -4,7 +4,7 @@
 
 /* Architecture Overview
 - EventListener creates listener and calls EventHandler
-- EventHandler handles event by calling internal models (Deck, Stars, Moves).
+- EventHandler handles event by calling internal models (ScorePanel, Deck).
 - Internal models will modify based on events and call ViewChanger to modify view
 - ViewChanger changes DOM HTML
 
@@ -15,88 +15,115 @@ Advantage:
     - does ViewChanger change HTML? 
     - does EventListener create listener and call appropriate EventHandler?
     - Do internal models work the way we expect without worrying about events, and views
-
-Disadvantage:
-- this project isn't meant to take this long... 
 */
 
-const SCORE = {
-    star : 3,
+const ScorePanel = {
     move : 0,
-}
+    incrementMove : () => {
+        this.move += 1;
+        ViewChanger.setMoves(this.move);
 
-const tempArray = {
-    temp : [ 'hi1', 'hi2', 'hi3']
-}
-
-const DECK = {
-    cards : [  'fa-anchor', 'fa-anchor', 'fa-bicycle', 'fa-bicycle', 'fa-bolt', 'fa-bolt', 'fa-bomb', 'fa-bomb', 'fa-cube', 'fa-cube', 'fa-diamond', 'fa-diamond', 'fa-leaf', 'fa-leaf', 'fa-paper-plane-o', 'fa-paper-plane-o'
-            ],
-    opened : []
-
-}
-
-class ScoreController {
-    static incrementMove() {
-        console.log("class ScoreController incrementMove()")
-        SCORE.move += 1;
-        ViewChanger.setMoves(SCORE.move);
-        ScoreController.evaluateStarChange(SCORE);
-    }
-
-    static evaluateStarChange() {
-        console.log("class ScoreController evaluateStarChange() : [BEGIN] evaluate star change ...");
-        console.log(`move is ${SCORE.move} and star is ${SCORE.star}`);
-        switch (SCORE.move) {
-            case 20 :
-                SCORE.star = 2;
-                ViewChanger.setStars(SCORE.star);
-                break;
-            case 30 :
-                SCORE.star = 1;
-                ViewChanger.setStars(SCORE.star);
-                break;
-            case 40 :
-                SCORE.star = 0;
-                ViewChanger.setStars(SCORE.star);
-                break;
-            default :
-                //console.log(`no star change : star remains ${SCORE.star}`);
+        if (this.move === 25) {         
+            ViewChanger.setStars(2);
+        } else if (this.move === 35) {
+            ViewChanger.setStars(1);
+        } else if (this.move === 45) {
+            ViewChanger.setStars(0);
+        } else {
+            // do nothing. stars don't change
         }
-        console.log(`after evaluation, star is ${SCORE.star}`);
-        console.log("class ScoreController evaluateStarChange() : [DONE] evaluate star change ...");
-    }
-
-    static resetScore() {
-        SCORE.star = 3;
-        ViewChanger.setStars(SCORE.star);
-
-        SCORE.move = 0;
-        ViewChanger.setMoves(SCORE.move);
+    },
+    reset : () => {
+        this.move = 0;
+        ViewChanger.setMoves(this.move);
+        ViewChanger.setStars(3);
     }
 }
+Object.seal(ScorePanel);
 
 
-class DeckController {
-     // Algorithm adapted from https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm 
-    static shuffleCards(array) {
-        console.log("In class DeckController shuffleCards(): shuffles cards in a deck");
+// Card Symbol enum
+const Symbol = {
+    ANCHOR : 'fa fa-anchor',
+    BICYCLE : 'fa fa-bicycle',
+    BOLT : 'fa fa-bolt',
+    BOMB : 'fa fa-bomb',
+    CUBE : 'fa fa-cube',
+    DIAMOND : 'fa fa-diamond',
+    LEAF : 'fa fa-leaf',
+    PLANE : 'fa fa-paper-plane-o',    
+}
+Object.freeze(Symbol);
+
+
+// Card State enum
+const State = {
+    CLOSED : 'card',
+    OPENED : 'card open show',
+    MATCHED : 'card open match',
+}
+Object.freeze(State);
+
+
+const Deck = {
+    cards : [Symbol.ANCHOR, Symbol.ANCHOR, Symbol.BICYCLE, Symbol.BICYCLE, Symbol.BOLT, Symbol.BOLT, Symbol.BOMB, Symbol.BOMB, Symbol.CUBE, Symbol.CUBE, Symbol.DIAMOND, Symbol.DIAMOND, Symbol.LEAF, Symbol.LEAF, Symbol.PLANE, Symbol.PLANE],
+    opened : [],
+    matched : [],
+    shuffle : (array) => {
+        // Algorithm adapted from https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm 
         for (let i = array.length - 1; i > 0; --i) {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
         }
-    }
+        ViewChanger.setCardsSymbols(array);
+    },
+    reset : () => {
+        console.log(`In Deck.reset() : `);
+        Deck.opened.length = 0;
+        Deck.matched.length = 0;
+        for (let i = 0; i < Deck.cards.length; i++) {
+            ViewChanger.closeCard(i);
+        }
+        Deck.shuffle(Deck.cards);
+    },
+    tryOpeningCard : ({index, symbol}) => {
+        console.log(`In Deck.tryOpeningCard(${index}, ${symbol})`);
+        Deck.opened.push({index,symbol})
+        ViewChanger.openCard(index);
+        
+        if (Deck.opened.length === 2) { window.setTimeout(Deck.checkMatch, 200); } 
+                       
+    },
+    checkMatch : () => {
+        console.log(`In Deck.checkMatch() : `);
+        const c0 = Deck.opened[0];
+        const c1 = Deck.opened[1];
 
-    static resetCards() {
-        console.log("In class DeckController resetCards(): resetting cards in a deck");
-        DeckController.shuffleCards(DECK.cards);
-        ViewChanger.setDeckSymbols(DECK.cards);
-    }
+        if (c0.symbol !== c1.symbol ) {
+            ViewChanger.closeCard(c0.index);
+            ViewChanger.closeCard(c1.index);
+            Deck.opened.length = 0;
+        } else {
+            ViewChanger.matchCard(c0.index);
+             ViewChanger.matchCard(c1.index);            
+            Deck.matched.push(c0, c1);
+            Deck.opened.length = 0;
+
+        }
+
+        if (Deck.matched.length === Deck.cards.length) {
+            // win condition
+            console.log("you win");
+        }
+
+    },
 }
+Object.freeze(Deck);
+Object.seal(Deck.cards)
 
 
 /* ViewChanger changes View (DOM, HTML)
- * all changes in DOM are in ViewChanger class
+ * all changes in DOM has be in ViewChanger class
  * ViewChanger is a layer between model and View 
  */
 class ViewChanger {
@@ -114,30 +141,28 @@ class ViewChanger {
     }
 
     static openCard(cardIndex) {
-        console.log(`class ViewChanger openCard(${cardIndex}) : opens up a card in a deck`);
+        console.log(`class ViewChanger openCard(${cardIndex}) : opens up a card in deck`);
         const d = document.getElementsByClassName("card");
-        d[cardIndex].setAttribute("class", "card show open");
+        d[cardIndex].setAttribute("class", State.OPENED);
     }
 
     static closeCard(cardIndex) {
-        console.log(`class ViewChanger closeCard(${cardIndex}) : closes a card in a deck`);
+        console.log(`class ViewChanger closeCard(${cardIndex}) : closes a card in deck`);
         const d = document.getElementsByClassName("card");
-        d[cardIndex].setAttribute("class", "card");
+        d[cardIndex].setAttribute("class", State.CLOSED);
     }
 
     static matchCard(cardIndex) {
         console.log(`class ViewChanger matchCard(${cardIndex}) : changes a card in a match state`);
         const d = document.getElementsByClassName("card");
-        d[cardIndex].setAttribute("class", "card show match");
+        d[cardIndex].setAttribute("class", State.MATCHED);
     }
 
-    static setDeckSymbols(symbolList) {
-        console.log(`class ViewChanger setDeckSymbols(${symbolList}) : set deck symbols`);
-
+    static setCardsSymbols(cards) {
+        console.log(`class ViewChanger setCardsSymbols(${cards}) : set cards symbols`);
         const d = document.getElementsByClassName("card");
-        console.assert(symbolList.length === d.length, "number of cards in view and model doesn't match");
-        for (let i = 0; i < d.length; i++) {
-            d[i].firstChild.setAttribute("class", `fa ${symbolList[i]}`);
+        for (let i = 0; i < cards.length; i++) {
+            d[i].firstChild.setAttribute("class", cards[i]);
         }
     }
 }
@@ -147,39 +172,62 @@ class EventListener {
     static setClickRestart() {
         console.log("class EventListener setClickRestartListener() : setup click eventListener for restart button...");
         console.log("[Listening...] restart button ");
-        const restartElement = document.getElementsByClassName('restart')[0];
-        restartElement.setAttribute("onclick", "EventHandler.clickRestart()");
+        const d = document.getElementsByClassName('restart')[0];
+        d.addEventListener("click", EventHandler.clickRestart);
+        ScorePanel.reset();
+        Deck.reset();
     }
 
     static setClickCards() {
         console.log("class EventListener setClickCardsListener(): setup click eventListener for each card...")
         console.log("[Listening...] card clicks");
-        const cardsElements = document.getElementsByClassName("card");
-        for (let i = 0; i < cardsElements.length; ++i) {
-            //const cardSymbol = this.firstChild.classList[1];
-            cardsElements[i].setAttribute("onclick", `EventHandler.clickCard(this.firstChild.classList[1], ${i})`);
-        }
+        
+        // why attach event listener on every card? attach one listener to parent and use event delegation
+        // inspired from https://davidwalsh.name/event-delegate
+        const d = document.getElementsByClassName("deck")[0];
+        
+        // We will call event handler when the card is closed
+        d.addEventListener("click", (e) => {
+            const state = e.target.className;
+            console.log(state);
+            if (state === State.CLOSED) {
+                EventHandler.clickCard(e);
+            }
+        });
     }
 }
 
 class EventHandler {
-    static clickCard(cardSymbol,cardIndex) {
-        console.log(`[EVENT] user clicks card[${cardIndex}] and triggers EventHandler.clickCard(${cardSymbol}, ${cardIndex})`);
-        console.log(`In class EventHandler clickCard(${cardSymbol}, ${cardIndex}) :`);
-        ScoreController.incrementMove();
+    static clickCard(e) {
+        console.log(`[EVENT] user clicks card and triggers EventHandler.clickCard()`);
+        console.log(`In class EventHandler clickCard() :`);
 
+        const index = e.target.id;
+        const state = e.target.className;
+        const symbol = e.target.firstChild.className;
+
+        ScorePanel.incrementMove();
+        Deck.tryOpeningCard({index, symbol});
+        
     }
     static clickRestart() {
         console.log('[EVENT] user clicks restart button and triggers EventHandler.clickRestart()');
         console.log("In class EventHandler clickRestart() : ");
-        ScoreController.resetScore();
-        DeckController.resetCards();
-
+        Deck.reset();
+        ScorePanel.reset();
+    }
+    static clickStart() {
+        Deck.reset();
+        ScorePanel.reset();
     }
 }
 
 function main() {
     console.log("function main() : Welcome to Matching Game!");
+
+    EventHandler.clickStart();    
+
+
     EventListener.setClickRestart();
     EventListener.setClickCards();
 
