@@ -28,12 +28,10 @@ const ScorePanel = {
         ScorePanel.move += 1;
         ViewChanger.setMoves(ScorePanel.move);
 
-        if (ScorePanel.move === 25) {         
+        if (ScorePanel.move === 30) {         
             ViewChanger.setStars(2);
-        } else if (ScorePanel.move === 35) {
+        } else if (ScorePanel.move === 40) {
             ViewChanger.setStars(1);
-        } else if (ScorePanel.move === 45) {
-            ViewChanger.setStars(0);
         } else {
             // do nothing. stars don't change
         }
