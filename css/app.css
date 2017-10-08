@@ -33,6 +33,25 @@ h1 {
     font-weight: 300;
 }
 
+
+/* Styles for modal*/
+.modal {
+    width: 660px;
+    height: 620px;
+    padding: 5%;
+    font-size: 5em;
+    position: fixed; 
+    z-index: 1; 
+    background-color: rgba(200,200,200,0.5); 
+    text-align: center;
+}
+.modal.show {
+    display: block; 
+}
+.modal.hide {
+    display: none;
+}
+
 /*
  * Styles for the deck of cards
  */
@@ -107,3 +126,4 @@ h1 {
     float: right;
     cursor: pointer;
 }
+

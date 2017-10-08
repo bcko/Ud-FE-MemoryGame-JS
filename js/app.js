@@ -114,6 +114,7 @@ const Deck = {
         if (Deck.matched.length === Deck.cards.length) {
             // win condition
             console.log("you win");
+            ViewChanger.hideStartButton(false);
         }
 
     },
@@ -165,17 +166,33 @@ class ViewChanger {
             d[i].firstChild.setAttribute("class", cards[i]);
         }
     }
+
+    static hideStartButton(bool) {
+        const d = document.getElementsByClassName("modal")[0];
+        if (bool === true) {
+            d.className = "modal hide";
+        } else {
+            d.innerHTML = "You Won! <br><br> Click to Play";
+            d.className = "modal show";
+        }
+    }
+
 }
 
 
 class EventListener {
+    static setClickStart() {
+        console.log("class EventListener setClickStart() : setup click eventListener for start button...");
+        console.log("[Listening...] start button ");
+        const d = document.getElementsByClassName('modal')[0];
+        d.addEventListener("click", EventHandler.clickStart);
+    }
+
     static setClickRestart() {
         console.log("class EventListener setClickRestartListener() : setup click eventListener for restart button...");
         console.log("[Listening...] restart button ");
         const d = document.getElementsByClassName('restart')[0];
         d.addEventListener("click", EventHandler.clickRestart);
-        ScorePanel.reset();
-        Deck.reset();
     }
 
     static setClickCards() {
@@ -216,18 +233,18 @@ class EventHandler {
         Deck.reset();
         ScorePanel.reset();
     }
-    static clickStart() {
+    static clickStart(e) {
+        console.log('[EVENT] user clicks start button and triggers EventHandler.clickStart()');
+        console.log("In class EventHandler clickStart() : ");
         Deck.reset();
         ScorePanel.reset();
+        ViewChanger.hideStartButton(true);
     }
 }
 
 function main() {
     console.log("function main() : Welcome to Matching Game!");
-
-    EventHandler.clickStart();    
-
-
+    EventListener.setClickStart();
     EventListener.setClickRestart();
     EventListener.setClickCards();
 
