@@ -24,6 +24,7 @@ Advantage:
 const ScorePanel = {
     move : 0,
     time : 0,
+    star : 3,
     incrementTime : () => {
         ScorePanel.time += 1;
         ViewChanger.setTime(ScorePanel.time);
@@ -33,8 +34,10 @@ const ScorePanel = {
         ViewChanger.setMoves(ScorePanel.move);
 
         if (ScorePanel.move === 30) {         
+            ScorePanel.star = 2;
             ViewChanger.setStars(2);
         } else if (ScorePanel.move === 40) {
+            ScorePanel.star = 1;
             ViewChanger.setStars(1);
         } else {
             // do nothing. stars don't change
@@ -42,6 +45,7 @@ const ScorePanel = {
     },
     reset : () => {
         ScorePanel.move = 0;
+        ScorePanel.star = 3;
         ScorePanel.time = 0;
         ViewChanger.setMoves(0);
         ViewChanger.setStars(3);
@@ -199,9 +203,14 @@ class ViewChanger {
     static hideStartButton(bool) {
         const d = document.getElementsByClassName("modal")[0];
         if (bool === true) {
+            d.innerHTML = `Ready to Play? <br><br>
+            3 stars &lt; 30 moves <br>
+            2 stars &lt; 40 moves <br>
+            1 star  &gt;= 40 moves<br><br> 
+            Click to Play`;
             d.className = "modal hide";
         } else {
-            d.innerHTML = "You Won! <br><br> Click to Play";
+            d.innerHTML = `Congratulation! <br><br> Total Time Taken: ${ScorePanel.time} <br> Star Rating: ${ScorePanel.star} <br> Total Moves: ${ScorePanel.move}  <br><br> Click to Restart`;
             d.className = "modal show";
         }
     }
