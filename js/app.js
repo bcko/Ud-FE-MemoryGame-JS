@@ -19,27 +19,36 @@ Advantage:
 
 const ScorePanel = {
     move : 0,
+    time : 0,
+    incrementTime : () => {
+        ScorePanel.time += 1;
+        ViewChanger.setTime(ScorePanel.time);
+    },
     incrementMove : () => {
-        this.move += 1;
-        ViewChanger.setMoves(this.move);
+        ScorePanel.move += 1;
+        ViewChanger.setMoves(ScorePanel.move);
 
-        if (this.move === 25) {         
+        if (ScorePanel.move === 25) {         
             ViewChanger.setStars(2);
-        } else if (this.move === 35) {
+        } else if (ScorePanel.move === 35) {
             ViewChanger.setStars(1);
-        } else if (this.move === 45) {
+        } else if (ScorePanel.move === 45) {
             ViewChanger.setStars(0);
         } else {
             // do nothing. stars don't change
         }
     },
     reset : () => {
-        this.move = 0;
-        ViewChanger.setMoves(this.move);
+        ScorePanel.move = 0;
+        ScorePanel.time = 0;
+        ViewChanger.setMoves(0);
         ViewChanger.setStars(3);
+        ViewChanger.setTime(0);
     }
 }
 Object.seal(ScorePanel);
+
+let Timer;
 
 
 // Card Symbol enum
@@ -108,12 +117,12 @@ const Deck = {
              ViewChanger.matchCard(c1.index);            
             Deck.matched.push(c0, c1);
             Deck.opened.length = 0;
-
         }
 
         if (Deck.matched.length === Deck.cards.length) {
             // win condition
             console.log("you win");
+            clearInterval(Timer);
             ViewChanger.hideStartButton(false);
         }
 
@@ -139,6 +148,11 @@ class ViewChanger {
         console.log(`class ViewChanger setMoves(${numMoves}) : changes number of moves in View`);
         const d = document.getElementsByClassName("moves")[0];
         d.innerHTML = numMoves;
+    }
+    static setTime(seconds) {
+        console.log(`class ViewChanger setTime(${seconds}) : changes timer in View`);
+        const d = document.getElementsByClassName("timer")[0];
+        d.innerHTML = seconds;
     }
 
     static openCard(cardIndex) {
@@ -238,7 +252,9 @@ class EventHandler {
         console.log("In class EventHandler clickStart() : ");
         Deck.reset();
         ScorePanel.reset();
+        Timer = setInterval(ScorePanel.incrementTime, 1000);
         ViewChanger.hideStartButton(true);
+
     }
 }
 
