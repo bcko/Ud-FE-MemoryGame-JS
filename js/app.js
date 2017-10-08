@@ -17,6 +17,10 @@ Advantage:
     - Do internal models work the way we expect without worrying about events, and views
 */
 
+
+/*
+ *
+ */
 const ScorePanel = {
     move : 0,
     time : 0,
@@ -46,10 +50,18 @@ const ScorePanel = {
 }
 Object.seal(ScorePanel);
 
+
+/* Timer global variable is declared and will later have interval function of
+ * ScorePanel.incrementTime() attached when user clicks start and the interval function
+ * will be stopped when all cards are matched or player presses restart.
+ */
 let Timer;
 
 
-// Card Symbol enum
+/* represents card's symbol (enum). In order to represent enum, it should be used with Object.freeze() to
+ * prevent any modification. Symbol enum's value is CSS class that represent each symbol in view. 
+ * Therefore, if our view changes, we have to change Symbol enum accordingly
+ */
 const Symbol = {
     ANCHOR : 'fa fa-anchor',
     BICYCLE : 'fa fa-bicycle',
@@ -60,15 +72,20 @@ const Symbol = {
     LEAF : 'fa fa-leaf',
     PLANE : 'fa fa-paper-plane-o',    
 }
+// we don't want our Symbol enum to change during runtime.
 Object.freeze(Symbol);
 
 
-// Card State enum
+/* represents card's state (enum). In order to represent enum, it should be used with Object.freeze() to
+ * prevent any modification. State enum's value is CSS class that represent each state in view. 
+ * Therefore, if our view changes, we have to change Symbol enum accordingly
+ */
 const State = {
     CLOSED : 'card',
     OPENED : 'card open show',
     MATCHED : 'card open match',
 }
+// we don't want our State enum to change during runtime
 Object.freeze(State);
 
 
@@ -130,9 +147,9 @@ Object.freeze(Deck);
 Object.seal(Deck.cards)
 
 
-/* ViewChanger changes View (DOM, HTML)
- * all changes in DOM has be in ViewChanger class
- * ViewChanger is a layer between model and View 
+/* ViewChanger is a layer between model and view so all changes in DOM has be in ViewChanger class
+ * ViewChanger is dependent on our Symbol and State enum's value.
+ * both ViewChanger and EventListener accesses view, we need to make sure they don't interfere.
  */
 class ViewChanger {
     static setStars(numStars) {
@@ -191,7 +208,10 @@ class ViewChanger {
 
 }
 
-
+/* has methods for each possible user's actions. Each method will attach event listener to user's view
+ * if our view changes, we have to make sure to change this! 
+ * both ViewChanger and EventListener accesses view, we need to make sure they don't interfere.
+ */
 class EventListener {
     static setClickStart() {
         console.log("class EventListener setClickStart() : setup click eventListener for start button...");
@@ -226,6 +246,8 @@ class EventListener {
     }
 }
 
+/* has a event handler methods for each possible user's action. 
+ */
 class EventHandler {
     static clickCard(e) {
         console.log(`[EVENT] user clicks card and triggers EventHandler.clickCard()`);
