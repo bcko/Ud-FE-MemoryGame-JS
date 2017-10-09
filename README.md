@@ -1,7 +1,7 @@
 # Udacity-Front-End-Nanodegree-Memory-Game
 Udacity Front-End Developer Nanodegree Project : Memory Game
 
-## [My Live Demo](https://bcko.github.io/Ud-FrontEnd-MemoryGame)
+## [My Live Demo](https://bcko.github.io/Ud-FrontEnd-MatchingGame)
 
 ## Project Overview
 ### What Will I Build?
